@@ -1,0 +1,5 @@
+openai>=1.0.0
+pypdf
+rank_bm25
+numpy
+streamlit

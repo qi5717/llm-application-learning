@@ -13,12 +13,12 @@ st.markdown("上传PDF文件，基于文档内容进行智能回答。")
 
 # ========== 2. 初始化客户端 ==========
 client_ali = OpenAI(
-    api_key="你的API key",
+    api_key=st.secrets["ALI_KEY"],
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
 client_ds = OpenAI(
-    api_key="你的API key",
+    api_key=st.secrets["DS_KEY"], 
     base_url="https://api.deepseek.com"
 )
 

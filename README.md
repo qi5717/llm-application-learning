@@ -29,3 +29,15 @@ pip install -r requirements.txt
 
 # 2. 运行 RAG Web 应用
 streamlit run src/week5_rag_app.py
+
+## 项目 4：全能实时 AI 助手 (Agent + Web UI)
+
+### 核心功能
+- **自主决策**：基于 LangChain 1.x `create_agent` 构建，能自主判断是否需要调用工具。
+- **多轮记忆**：利用 Streamlit `session_state` 实现网页端的连续对话。
+- **工具集成**：接入 DuckDuckGo 联网搜索与时间获取工具。
+- **防幻觉控制**：通过强约束的 System Prompt，确保搜索失败时如实告知用户，拒绝编造。
+
+### 运行方式
+```bash
+streamlit run app.py

@@ -39,7 +39,7 @@ def get_current_time(query: str) -> str:
 
 tools = [web_search, get_current_time]
 
-# ================= 创建 Agent（强化版人设） =================
+# ================= 创建 Agent =================
 agent = create_agent(
     model=llm,
     tools=tools,

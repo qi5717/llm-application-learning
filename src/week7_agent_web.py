@@ -17,7 +17,7 @@ with st.sidebar:
         st.rerun() # 刷新页面
 
 # ================= 初始化 API =================
-api_key = "你的 API_key" 
+api_key = st.secrets["DS_KEY"]
 llm = ChatOpenAI(model="deepseek-flash", api_key=api_key, base_url="https://api.deepseek.com")
 
 # ================= 定义工具 =================

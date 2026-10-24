@@ -17,7 +17,7 @@ G.add_edge("David", "CEO", relation="汇报给")
 
 # ========== 1. 初始化 ==========
 client = OpenAI(
-    api_key="API-Key",
+    st.secrets["DS_KEY"], 
     base_url="https://api.deepseek.com"
 )
 

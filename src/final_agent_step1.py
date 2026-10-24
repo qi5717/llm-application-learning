@@ -102,11 +102,13 @@ def execute_skill(skill_name, user_query):
         return  response.choices[0].message.content
 
     elif skill_name == "graph_query":
-        # 1. 让大模型把自然语言转成起点和终点
+        # 1. 让大模型提取起点、终点和查询方向
         extract_prompt = f"""
         用户问：{user_query}
         请提取出需要查询关系的人物A（起点）和人物B（终点）。
-        只输出 JSON，格式为：{{"start": "人名", "end": "人名"}}
+        同时判断查询方向（direction）：如果问的是“上级、老板、汇报给谁”，direction 为 "up"；如果问的是“下级、手下、谁向他汇报”，direction 为 "down"。
+        
+        只输出 JSON，格式为：{{"start": "人名", "end": "人名", "direction": "up或down"}}
         如果只问了一个人，end 留空。
         """
         resp = client.chat.completions.create(
@@ -117,30 +119,44 @@ def execute_skill(skill_name, user_query):
         info = json.loads(resp.choices[0].message.content)
         start = info.get("start")
         end = info.get("end")
+        direction = info.get("direction", "up") # 默认是查上级
         
-        # 2. 核心防守：如果大模型提取的实体不在图谱里，直接拦截！
+        # 2. 核心防守
         if not start or start not in G:
             return f"【图谱查询】抱歉，图谱系统中未找到人物 '{start}' 的记录。"
         if end and end not in G:
             return f"【图谱查询】抱歉，图谱系统中未找到人物 '{end}' 的记录。"
 
-        # 3. 图谱查询逻辑（加上万能的异常捕获）
+        # 3. 图谱查询逻辑（加入方向判断）
         try:
             if start and not end:
-                # 查某人的直接上级
-                paths = list(G.successors(start))
-                if paths:
-                    return f"【图谱查询】{start} 的直接上级是：{paths[0]}。"
-                else:
-                    return f"【图谱查询】未找到 {start} 的上级。"
+                if direction == "up":
+                    # 顺着箭头找上级 (successors)
+                    paths = list(G.successors(start))
+                    if paths:
+                        return f"【图谱查询】{start} 的直接上级是：{paths[0]}。"
+                    else:
+                        return f"【图谱查询】未找到 {start} 的上级。"
+                elif direction == "down":
+                    # 逆着箭头找下级 (predecessors)
+                    paths = list(G.predecessors(start))
+                    if paths:
+                        return f"【图谱查询】{start} 的直接下级是：{', '.join(paths)}。"
+                    else:
+                        return f"【图谱查询】未找到 {start} 的下级。"
+            
             elif start and end:
                 # 查两人之间的路径
                 path = nx.shortest_path(G, source=start, target=end)
                 return f"【图谱查询】{start} 到 {end} 的汇报路径为：{' -> '.join(path)}"
+                
         except nx.NetworkXError as e:
             return f"【图谱查询】网络图查询异常：{str(e)}"
         except Exception as e:
             return f"【图谱查询】系统发生未知错误：{str(e)}"
+       
+  
+     
     
     elif skill_name == "web_search":
         try:

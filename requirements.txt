@@ -3,4 +3,5 @@ streamlit
 langchain
 langchain-openai
 langchain-community
+networkx
 ddgs

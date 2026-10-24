@@ -102,7 +102,7 @@ def execute_skill(skill_name, user_query):
         return  response.choices[0].message.content
     
     elif skill_name == "graph_query":
-        # 让大模型把自然语言转成起点和终点，方便图谱查询
+        # 让大模型把自然语言转成起点和终点
         extract_prompt = f"""
         用户问：{user_query}
         请提取出需要查询关系的人物A（起点）和人物B（终点）。
@@ -118,6 +118,12 @@ def execute_skill(skill_name, user_query):
         start = info.get("start")
         end = info.get("end")
         
+        # ========== 核心防守：检查节点是否存在 ==========
+        if start and start not in G:
+            return f"【图谱查询】抱歉，系统中未找到名为 '{start}' 的员工记录。"
+        if end and end not in G:
+            return f"【图谱查询】抱歉，系统中未找到名为 '{end}' 的员工记录。"
+
         # 图谱查询逻辑
         try:
             if start and not end:
@@ -127,16 +133,12 @@ def execute_skill(skill_name, user_query):
                     return f"【图谱查询】{start} 的直接上级是：{paths[0]}。"
                 else:
                     return f"【图谱查询】未找到 {start} 的上级。"
-                
             elif start and end:
                 # 查两人之间的路径
                 path = nx.shortest_path(G, source=start, target=end)
                 return f"【图谱查询】{start} 到 {end} 的汇报路径为：{' -> '.join(path)}"
         except nx.NetworkXNoPath:
             return f"【图谱查询】在系统中未找到 {start} 和 {end} 之间的关联。"
-        except nx.NodeNotFound:
-            return f"【图谱查询】图谱中不存在这个人。"
-        return "图谱查询失败，请检查人物名称。"
     
     elif skill_name == "web_search":
         try:

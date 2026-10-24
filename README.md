@@ -38,6 +38,14 @@ streamlit run src/week5_rag_app.py
 - **工具集成**：接入 DuckDuckGo 联网搜索与时间获取工具。
 - **防幻觉控制**：通过强约束的 System Prompt，确保搜索失败时如实告知用户，拒绝编造。
 
+## 项目 5：企业级渐进式路由 Agent (Full-Stack Agent)
+
+架构核心：基于 Harness 架构设计了渐进式披露路由（Progressive Disclosure），将 Prompt 的 Token 成本降低了 80%。
+
+多技能协同：实现了 RAG（私有文档向量检索）、Graph（基于 NetworkX 的多跳关系推理）与 Web Search（联网实时检索）的混合路由。
+
+工程优化：在联网搜索前引入 LLM Query 改写机制，大幅提升了搜索引擎的召回精度。
+
 ### 运行方式
 ```bash
 streamlit run app.py

@@ -3,7 +3,20 @@ from ddgs import DDGS
 import streamlit as st
 import networkx as nx
 import json
+import os
 
+
+HISTORY_FILE = "chat_history.json"
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def save_history(messages):
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(messages, f, ensure_ascii=False, indent=2)
 
 
 # 构建一个微型的企业组织架构图
@@ -181,7 +194,7 @@ st.title("🕵️ 企业级全栈特工 Agent")
 st.write("集成 HR 知识库、组织架构图谱与联网搜索的渐进式智能体。")
 
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = load_history()
     
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
@@ -191,6 +204,7 @@ if prompt := st.chat_input("请问有什么可以帮您？"):
     # 1. 显示用户提问
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role":"user","content": prompt})
+    save_history(st.session_state.messages)
     
     with st.spinner("AI 正在思考调度中..."):
         # 2. 路由判定

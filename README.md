@@ -46,6 +46,16 @@ streamlit run src/week5_rag_app.py
 
 工程优化：在联网搜索前引入 LLM Query 改写机制，大幅提升了搜索引擎的召回精度。
 
+## 项目名称 6：企业级渐进式路由多智能体 Agent（全栈独立开发）
+
+微服务架构：基于 FastAPI 构建后端服务，Streamlit 作为前端展示，实现前后端彻底解耦；通过 CORS 处理跨域，使用 Pydantic 进行数据校验。
+
+渐进式路由（Harness）：设计轻量级 Router 调度器，根据用户意图动态挂载四大技能（企业 RAG、NetworkX 图谱查询、实时联网、文案生成），大幅降低主模型 Token 消耗与幻觉。
+
+多智体协同（Multi-Agent）：引入 LangGraph 构建 Writer 与 Reviewer 的状态图（StateGraph）。利用条件边（Conditional Edges）实现“撰写-审核-打回重写”的自反思闭环，并加入熔断机制防止无限死循环。
+
+工程化优化：使用 lru_cache 实现高频请求的内存缓存，针对重复问题响应时间从数秒降至毫秒级，彻底阻断 API 重复计费；加入了基于 Node 存在性校验的防御性编程，彻底解决实体查询崩溃问题。
+
 ### 运行方式
 ```bash
 streamlit run app.py
